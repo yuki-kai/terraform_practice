@@ -17,7 +17,7 @@ resource "aws_internet_gateway" "practice" {
 }
 
 # サブネット
-resource "aws_subnet" "public_a" {
+resource "aws_subnet" "ecs_subnet_public_1a" {
   vpc_id     = aws_vpc.practice.id
   cidr_block = "10.0.0.0/24"
   # サブネットで起動したインスタンスにパブリックIPを自動で割り当てる
@@ -27,10 +27,19 @@ resource "aws_subnet" "public_a" {
     Name = "Terraform"
   }
 }
-resource "aws_subnet" "public_c" {
+resource "aws_subnet" "ecs_subnet_public_1c" {
   vpc_id     = aws_vpc.practice.id
   cidr_block = "10.0.1.0/24"
-  availability_zone       = "ap-northeast-1a"
+  availability_zone       = "ap-northeast-1c"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "Terraform"
+  }
+}
+resource "aws_subnet" "ecs_subnet_public_1d" {
+  vpc_id     = aws_vpc.practice.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone       = "ap-northeast-1d"
   map_public_ip_on_launch = true
   tags = {
     Name = "Terraform"
@@ -54,10 +63,14 @@ resource "aws_route" "public" {
 
 # ルートテーブルの関連付け
 resource "aws_route_table_association" "public_a" {
-  subnet_id      = aws_subnet.public_a.id
+  subnet_id      = aws_subnet.ecs_subnet_public_1a.id
   route_table_id = aws_route_table.public.id
 }
 resource "aws_route_table_association" "public_c" {
-  subnet_id      = aws_subnet.public_c.id
+  subnet_id      = aws_subnet.ecs_subnet_public_1c.id
+  route_table_id = aws_route_table.public.id
+}
+resource "aws_route_table_association" "public_d" {
+  subnet_id      = aws_subnet.ecs_subnet_public_1d.id
   route_table_id = aws_route_table.public.id
 }
